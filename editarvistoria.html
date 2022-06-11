@@ -1,0 +1,146 @@
+<html>
+		<head>
+		<meta charset="utf-8">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<script type="text/javascript" src="js/index.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="js/jquery.mask.min.js"></script>
+		
+
+
+<script>
+
+$(document).ready(function()
+ {  
+
+	var id = window.localStorage.getItem("key");
+
+	var conteudo = "";
+	var qtd = "";
+
+			        $.ajax({
+                    type: "POST",
+                    url: "https://apvistoria.000webhostapp.com/buscardadosvistoria.php",
+                    data: {id: id},
+                    crossDomain: true,
+                    cache: false,
+                    beforeSend: function() {
+                        $("#insert").val('Connecting...');
+                    },
+                    success: function(data) {
+				
+						obj = JSON.parse(data);
+						conteudo+= "<div align='center'> <strong>Editando Vistoria "+obj[0].idVistoria+"</strong></div><input type='hidden' id='id' name='id' value="+obj[0].idVistoria+" />";
+						
+						for(var i = 0; i < obj.length; i++) {
+
+							if(obj[i].resposta == 1){
+								conteudo+="<label>"+obj[i].idPergunta+". "+obj[i].nomePergunta+"</label><br><input type='radio' name='"+obj[i].idPergunta+"' checked class='"+obj[i].idPergunta+"'  value='1'> SIM <br><input type='radio' name='"+obj[i].idPergunta+"'  class='"+obj[i].idPergunta+"'  value='0'> NÂO <br>";
+							}else{
+								conteudo+="<label>"+obj[i].idPergunta+". "+obj[i].nomePergunta+"</label><br><input type='radio' name='"+obj[i].idPergunta+"'  class='"+obj[i].idPergunta+"'  value='1'> SIM <br><input type='radio' name='"+obj[i].idPergunta+"'  class='"+obj[i].idPergunta+"' checked value='0'> NÂO <br>";
+							
+							}
+						 qtd = i;
+
+						}
+						conteudo+="<div class='form-group'><label for='obs'>Comentario:</label><textarea class='form-control'  rows='4' id='obs'  name='obs'>"+obj[0].comentario+"</textarea></div>";	
+						document.getElementById("qtd").value = qtd+1;
+						$("#conteudo").html(conteudo);  	
+                    }
+                });	
+
+	
+ });
+		function realizarVistoria(){
+			var qtd = document.getElementById("qtd").value;
+			var respostas = [] ;
+			for(var  i = 1 ; i <= qtd ; i++){
+			
+				if($("."+i+":checked").val() =="" || $("."+i+":checked").val() == null){
+					alert("Pergunta "+i+" com resposta inválida!");
+					break;
+					
+				}
+				respostas.push($("."+i+":checked").val());
+
+			}
+			var data = new Date();
+
+			// Guarda cada pedaço em uma variável
+			var dia     = data.getDate();           // 1-31
+			var mes     = data.getMonth();          // 0-11 (zero=janeiro)
+			var ano4    = data.getFullYear();       // 4 dígitos
+
+			// Formata a data e a hora (note o mês + 1)
+			var str_data = dia + '/' + (mes+1) + '/' + ano4;
+			
+			//var nome = document.getElementById("nome").value;
+			var id = document.getElementById("id").value;
+			var obs = document.getElementById("obs").value;
+			var data = str_data;
+
+			        $.ajax({
+                    type: "POST",
+                    url: "https://apvistoria.000webhostapp.com/editarvistoria.php",
+                    data: {id: id, obs: obs,data:data,respostas: respostas},
+                    crossDomain: true,
+                    cache: false,
+                    beforeSend: function() {
+                        $("#insert").val('Connecting...');
+                    },
+                    success: function(data) {
+
+                        if (data == "success") {
+							//document.getElementById("obs").value = "";
+                            alert("Vistoria editada com sucesso");
+							window.location.href = "index.html";
+                           // $("#insert").val('submit');
+                        } else if (data == "error") {
+                            alert("error");
+                        }
+                    }
+                });
+		
+		}
+
+</script>
+</head>
+
+<body>
+	<div class="pos-f-t">
+	  <nav class="navbar navbar-dark bg-dark">
+		  <span class="navbar"></span>
+		</button>
+	  </nav>
+	</div>
+   <div  class="container">
+
+       
+		<input type="hidden" id="qtd" name="qtd" value="" />
+		
+		
+
+		<div id="conteudo"></div>
+		
+		<br>
+		
+		
+		
+
+		
+		<div class="form-group" > 
+			<a class="btn btn-primary btn-block" id="realizarVistoria" onclick="realizarVistoria();" ><i class="material-icons"></i>Atualizar Vistoria</a>
+		</div>
+		
+
+		<br>
+		
+    </div>
+	
+    </body>
+</html>

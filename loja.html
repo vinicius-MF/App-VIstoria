@@ -1,0 +1,130 @@
+<html>
+		<head>
+		<meta charset="utf-8">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<script type="text/javascript" src="js/index.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="js/jquery.mask.min.js"></script>
+		<script type="text/javascript" src="js/moment.js"></script>
+		
+
+
+<script>
+
+$(document).ready(function()
+ {  
+	var value = window.localStorage.getItem("nome");
+	document.getElementById("nome").value = value;
+	
+	
+		var data = new Date(),
+        dia  = data.getDate().toString().padStart(2, '0'),
+        mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
+        ano  = data.getFullYear();
+		data = dia+"/"+mes+"/"+ano;
+
+	
+	 
+	 var url="https://apvistoria.000webhostapp.com/buscar.php";
+	 $.getJSON(url,function(result){
+		 console.log(result);
+		 $.each(result, function(i, field){
+				//alert(field.nomeLoja);
+				
+				moment.locale('pt-br');
+				//setando data1
+				var data1 = moment(field.ultvist,'DD/MM/YYYY');
+				//setando data2
+				var data2 = moment(data,'DD/MM/YYYY');
+				//tirando a diferenca da data2 - data1 em dias
+				var diff  = data2.diff(data1, 'days');
+				//alert(diff);
+				if(diff >=3 || field.ultvist == "" || field.ultvist == null ){
+					 $("#lojas").append("<option value='"+field.id+"'> "+field.nomeLoja+" </option>");
+				}
+			  
+			 
+			 
+
+		 });
+		alert("Lojas prontas"); 
+	 });
+	
+ });
+		function salvar(){
+			var nome = document.getElementById("nome").value;
+		
+            var dataString = "nome=" + nome + "&insert=";
+			        $.ajax({
+                    type: "POST",
+                    url: "https://apvistoria.000webhostapp.com/insert.php",
+                    data: dataString,
+                    crossDomain: true,
+                    cache: false,
+                    beforeSend: function() {
+                        $("#insert").val('Connecting...');
+                    },
+                    success: function(data) {
+                        if (data == "success") {
+                            alert("inserted");
+                           // $("#insert").val('submit');
+                        } else if (data == "error") {
+                            alert("error");
+                        }
+                    }
+                });
+		
+		}
+	
+	function realizarVistoria(){
+		if(document.getElementById("lojas").value == "" || document.getElementById("lojas").value == null){
+			alert("Loja selecionada inválida");
+			return false;
+		}
+		var loja =  document.getElementById("lojas").value;
+		//alert(loja);
+		sessionStorage.setItem("loja",loja);
+		window.localStorage.setItem("key", loja);
+        var keyname = window.localStorage.key(0);
+		
+		//Direciona para pagina 
+		window.location.href = "perguntas.html";
+	}
+      
+</script>
+</head>
+
+<body
+	<div class="pos-f-t">
+	  <nav class="navbar navbar-dark bg-dark">
+		  <span class="navbar"></span>
+		</button>
+	  </nav>
+	</div>
+   <div  class="container">
+	<div align="center"> <strong>App Vistoria </strong></div>
+       
+
+		
+		<label for="labelloja" >Lojas:</label>
+		<select id="lojas" class="form-control ">
+			<option></option>
+		</select>
+		
+		<br>
+		<div > 
+			<a class="btn btn-primary btn-block" id="realizarVistoria" onclick="realizarVistoria();" ><i class="material-icons"></i>Escolher Loja</a>
+			<br>
+			<a class="btn btn-danger btn-block" id="listarVistoria" href="listarvistoria.html"  ><i class="material-icons">person</i>Listar Vistorias</a>
+		</div>
+		<br>
+		<input id="nome" name="nome" type="text" readonly />
+    </div>
+		
+    </body>
+</html>

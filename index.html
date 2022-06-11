@@ -1,0 +1,66 @@
+<html>
+		<head>
+		<meta charset="utf-8">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<script type="text/javascript" src="js/index.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="js/jquery.mask.min.js"></script>
+		
+
+
+<script>
+
+		function salvar(){
+			if(document.getElementById("nome").value == "" || document.getElementById("nome").value == null){
+				alert("Nome inválido!");
+				return false;
+			}
+			var nome =  document.getElementById("nome").value;
+			//alert(nome);
+			sessionStorage.setItem("nome",nome);
+			window.localStorage.setItem("nome", nome);
+			var keyname = window.localStorage.key(1);
+		
+			//Direciona para pagina inicial
+			window.location.href = "loja.html";
+		
+		}
+
+      
+</script>
+</head>
+
+<body>
+
+	<div class="pos-f-t">
+	  <nav class="navbar navbar-dark bg-dark">
+		  <span class="navbar"></span>
+		
+	  </nav>
+	</div>
+
+   <div  class="container">
+         <div align="center"> <strong>App Vistoria </strong></div>
+		
+		
+		<form>
+			
+			<label>Nome Vistoriador</label>
+			<input id="nome" name="nome" type="text" placeholder="Nome" class="form-control"/>
+			<br>
+			<button type="button" onclick="salvar();" id="Salvar" class="btn btn-primary btn-block" value="Salvar"> SALVAR</button>
+			
+			
+		</form>
+		
+		
+		
+    </div>
+	
+    </body>
+</html>

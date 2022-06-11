@@ -1,0 +1,105 @@
+<html>
+		<head>
+		<meta charset="utf-8">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<script type="text/javascript" src="js/index.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="js/jquery.mask.min.js"></script>
+		
+
+
+<script>
+$(document).ready(function()
+ {  
+	
+	
+	  var out = '<TABLE class="table table-striped"> <tr><th>Nome  Loja</th><th>Vistoriador</th><th>Data</th><th>Editar</th><th>Excluir</th></tr>';
+	 var url="https://apvistoria.000webhostapp.com/buscarv.php";
+	 $.getJSON(url,function(result){
+		 console.log(result);
+		 $.each(result, function(i, field){
+				//alert(field);
+				
+					out += '<tr><td>'+field.nomeLoja+'</td><td>'+field.nomeVistoriador+'</td><td>'+field.data+'</td><td><a type="button" class="btn btn-primary" onclick="editar('+field.idvistoria+')">Editar</a></td><td><a  type="button" class="btn btn-danger" onclick="excluir('+field.idvistoria+')">Excluir</a></td></tr>';
+
+					 //$("#lojas").append("<option value='"+field.id+"'> "+field.nomeLoja+" </option>");
+				
+			  
+			 
+			 
+
+		 });
+		 document.getElementById("conteudo").innerHTML = out;
+		//alert("Lojas prontas"); 
+	 });
+	
+ });
+
+ function excluir($id){
+	var id = $id;
+	//alert($id);
+				 $.ajax({
+                    type: "POST",
+                    url: "https://apvistoria.000webhostapp.com/excluirvistoria.php",
+                    data: {id: id},
+                    crossDomain: true,
+                    cache: false,
+                    beforeSend: function() {
+                        $("#insert").val('Connecting...');
+                    },
+                    success: function(data) {
+
+                        if (data == "success") {
+                            alert("Vistoria excluida");
+							window.location.href = "listarvistoria.html";
+                           // $("#insert").val('submit');
+                        } else if (data == "error") {
+                            alert("error");
+                        }
+                    }
+                });
+ }
+ 
+ function editar($id){
+ 
+	var id = $id;
+	sessionStorage.setItem("id",$id);
+	window.localStorage.setItem("key", $id);
+    var keyname = window.localStorage.key(0);
+
+	//Direciona para pagina inicial
+	window.location.href = "editarvistoria.html";
+ 
+ }
+      
+</script>
+</head>
+
+<body>
+	<div class="pos-f-t">
+	  <nav class="navbar navbar-dark bg-dark">
+		  <span class="navbar"></span>
+		</button>
+	  </nav>
+	</div>
+   <div  class="container">
+	<div align="center"> <strong>Listar Vistorias </strong></div>
+       
+
+		<input type="hidden" id="qtd" name="qtd" value="" />
+		
+
+		<div id="conteudo"></div>
+		
+
+	<a class="btn btn-primary btn-block" href="index.html"><i class="material-icons"></i>Voltar</a>
+	
+    </div>
+	
+    </body>
+</html>
